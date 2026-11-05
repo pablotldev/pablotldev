@@ -337,12 +337,15 @@ async function selector(tema, activo) {
     `<g transform="translate(${f1(xGlobo)} ${(h - 16) / 2})" fill="none" stroke="${t.suave}" stroke-width="1.2">` +
       `<circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c1.9 1.9 2.8 4.1 2.8 6.5S9.9 12.6 8 14.5M8 1.5C6.1 3.4 5.2 5.6 5.2 8s.9 4.6 2.8 6.5"/></g>`,
   );
+  // A 1× el navegador redondea la tinta al píxel: con la línea base en 20,5
+  // el texto queda 1 px por debajo del centro de la pastilla. 20,2 lo centra.
+  const lineaBase = 20.2;
   const opciones = ["es", "en"];
   opciones.forEach((id, k) => {
     const x = k === 0 ? xEs : xEn;
     const on = id === activo;
     if (on) lz.raw(`<rect x="${x}" y="${pad}" width="${anchoOpcion}" height="${h - 2 * pad}" rx="${h / 2 - pad}" fill="${t.acento}"/>`);
-    lz.raw(lz.texto(x + anchoOpcion / 2, 20.5, id.toUpperCase(), "seccion", on ? "#ffffff" : "suave", { anchor: "middle" }));
+    lz.raw(lz.texto(x + anchoOpcion / 2, lineaBase, id.toUpperCase(), "seccion", on ? "#ffffff" : "suave", { anchor: "middle" }));
   });
   return lz.render();
 }
