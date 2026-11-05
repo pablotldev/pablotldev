@@ -316,9 +316,16 @@ async function stack(tema, p, T) {
 async function selector(tema, activo) {
   const w = 106;
   const h = 32;
-  // El globo y la pastilla de EN comparten centro con los extremos redondeados
-  // del interruptor: así los márgenes de izquierda y derecha quedan iguales.
   const pad = 5;
+  const anchoOpcion = 30;
+  const hueco = 4;
+  // Las etiquetas van centradas en su pastilla y el conjunto (globo + ES + EN)
+  // queda centrado en la burbuja: el margen izquierdo del globo y el que queda
+  // a la derecha de EN miden lo mismo.
+  const anchoTexto = medir("EN", "seccion");
+  const xEn = w - pad - anchoOpcion;
+  const xEs = xEn - hueco - anchoOpcion;
+  const xGlobo = w - (xEn + anchoOpcion / 2 + anchoTexto / 2);
   // 4 px transparentes por debajo: en el README igualan el hueco de abajo con
   // el de arriba (GitHub no deja ajustar márgenes con CSS).
   const aire = 4;
@@ -327,15 +334,15 @@ async function selector(tema, activo) {
   lz.raw(`<rect x="0.5" y="0.5" width="${w - 1}" height="${h - 1}" rx="${h / 2}" fill="${t.panel}" stroke="${t.linea}"/>`);
   // globo terráqueo de trazo
   lz.raw(
-    `<g transform="translate(${h / 2 - 8} 8)" fill="none" stroke="${t.suave}" stroke-width="1.2">` +
+    `<g transform="translate(${f1(xGlobo)} ${(h - 16) / 2})" fill="none" stroke="${t.suave}" stroke-width="1.2">` +
       `<circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c1.9 1.9 2.8 4.1 2.8 6.5S9.9 12.6 8 14.5M8 1.5C6.1 3.4 5.2 5.6 5.2 8s.9 4.6 2.8 6.5"/></g>`,
   );
   const opciones = ["es", "en"];
   opciones.forEach((id, k) => {
-    const x = w - pad - 32 - (opciones.length - 1 - k) * 36;
+    const x = k === 0 ? xEs : xEn;
     const on = id === activo;
-    if (on) lz.raw(`<rect x="${x}" y="${pad}" width="32" height="${h - 2 * pad}" rx="${h / 2 - pad}" fill="${t.acento}"/>`);
-    lz.raw(lz.texto(x + 16, 20.5, id.toUpperCase(), "seccion", on ? "#ffffff" : "suave", { anchor: "middle" }));
+    if (on) lz.raw(`<rect x="${x}" y="${pad}" width="${anchoOpcion}" height="${h - 2 * pad}" rx="${h / 2 - pad}" fill="${t.acento}"/>`);
+    lz.raw(lz.texto(x + anchoOpcion / 2, 20.5, id.toUpperCase(), "seccion", on ? "#ffffff" : "suave", { anchor: "middle" }));
   });
   return lz.render();
 }
